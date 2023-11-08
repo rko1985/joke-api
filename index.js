@@ -35,9 +35,58 @@ app.get('/filter', (req, res) => {
 
 //4. POST a new joke
 
+app.post('/jokes', (req, res) => {
+  const text = req.body.text;
+  const type = req.body.type;
+  const id = jokes.length + 1;
+
+  const newJoke = {
+    id: id,
+    jokeText : text,
+    jokeType : type
+  };
+
+  jokes.push(newJoke);
+
+  res.json(jokes[jokes.length - 1])
+});
+
 //5. PUT a joke
 
+app.put('/jokes/:id', (req, res) => {
+  const text = req.body.text;
+  const type = req.body.type;
+  const id = parseInt(req.params.id);
+
+  const newJoke = {
+    id: id,
+    jokeText : text,
+    jokeType : type
+  };
+
+  const searchIndex = jokes.findIndex((joke) => joke.id == id);
+  jokes[searchIndex] = newJoke;
+
+  res.json(jokes[searchIndex]);
+
+  console.log(jokes[searchIndex]);
+});
+
 //6. PATCH a joke
+
+app.patch('/jokes/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const existingJoke = jokes.find((joke) => joke.ik === id);
+  const replacementJoke = {
+    id: id,
+    jokeText: req.body.text || existingJoke.jokeText,
+    jokeType: req.body.type || existingJoke.jokeType
+  };
+  const searchIndex = jokes.findIndex((joke) => joke.id === id);
+  jokes[searchIndex] = replacementJoke;
+  console.log(jokes[searchIndex]);
+  res.json(replacementJoke);
+});
 
 //7. DELETE Specific joke
 
