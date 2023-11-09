@@ -76,7 +76,7 @@ app.put('/jokes/:id', (req, res) => {
 
 app.patch('/jokes/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const existingJoke = jokes.find((joke) => joke.ik === id);
+  const existingJoke = jokes.find((joke) => joke.id === id);
   const replacementJoke = {
     id: id,
     jokeText: req.body.text || existingJoke.jokeText,
@@ -90,7 +90,36 @@ app.patch('/jokes/:id', (req, res) => {
 
 //7. DELETE Specific joke
 
+app.delete('/jokes/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  
+  const searchIndex = jokes.findIndex((joke) => joke.id === id);
+  console.log(searchIndex);
+  if(searchIndex > -1){
+    jokes.splice(searchIndex, 1);
+  } else {
+    res.status(404)
+      .json({error: `Joke with id: ${id} not found`});
+  }
+  
+  res.send("OK");
+});
+
 //8. DELETE All jokes
+
+app.delete('/all', (req, res) => {
+  console.log(req.query.key);
+  const apiKey = req.query.key;
+  if(apiKey == masterKey){
+    //delete all
+    jokes = [];
+    res.sendStatus(200);
+  } else {
+    res.status(404)
+    .json({error: `Invalide API key`});
+  }
+  
+});
 
 app.listen(port, () => {
   console.log(`Successfully started server on port ${port}.`);
